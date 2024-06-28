@@ -1,11 +1,15 @@
 package br.edu.up.DAO;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -66,6 +70,76 @@ public class PessoaDAO {
             System.out.println("Arquivo não encontrado! " + e.getMessage());
         }
         return ListaPessoa;
+    }
+
+    public void ler() {
+        List<List<String>> regs = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader("pessoa.csv"))) {
+            String linha;
+            while ((linha = br.readLine()) != null) {
+                String[] lins = linha.split(";");
+                regs.add(Arrays.asList(lins));
+                System.out.println(lins[0] + " - " + lins[1] + " - " + lins[2]);
+            }
+        } catch (IOException e) {
+            System.out.println("Erro de leitura: " + e.getMessage());
+        }
+    }
+
+    private String nomeArquivo = "./pessoa.csv";
+
+    public void Adicionar(Pessoa pessoa) {
+
+        try {
+            boolean arquivoExiste = new File(nomeArquivo).exists();
+
+            FileWriter escritor = new FileWriter(nomeArquivo, StandardCharsets.ISO_8859_1, true);
+
+            if (!arquivoExiste) {
+                escritor.write("Codigo;Nome\n");
+            }
+
+            escritor.write(pessoa.getCodigo() + ";" + pessoa.getNome() + "\n");
+
+            escritor.flush();
+
+            escritor.close();
+
+        } catch (IOException e) {
+            System.out.println("Erro de escrita: " + e.getMessage());
+        }
+    }
+
+    public ArrayList<Pessoa> listarPessoa() {
+        ArrayList<Pessoa> lista = new ArrayList<>();
+
+        try {
+            BufferedReader leitor = new BufferedReader(new FileReader(nomeArquivo));
+            String linha;
+            boolean primeiraLinha = true;
+
+            while (((linha = leitor.readLine()) != null)) {
+                if (primeiraLinha) {
+                    primeiraLinha = false;
+                    continue;
+                }
+
+                String[] partes = linha.split(";");
+
+                int codigo = Integer.parseInt(partes[0]);
+                String nome = partes[1];
+
+                Pessoa p = new Pessoa(codigo, nome);
+
+                lista.add(p);
+            }
+
+            leitor.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+
+        return lista;
     }
 
 }

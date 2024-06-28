@@ -4,6 +4,11 @@ public class Pessoa {
     int Codigo;
     String Nome;
 
+    public Pessoa(int codigo, String nome) {
+        this.Codigo = codigo;
+        this.Nome = nome;
+    }
+
     public int getCodigo() {
         return Codigo;
     }
@@ -21,7 +26,7 @@ public class Pessoa {
     }
 
     public String toCsv() {
-        return Codigo + "," + Nome;
+        return Codigo + ";" + Nome;
     }
 
 }
